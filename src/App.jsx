@@ -103,10 +103,10 @@ function App() {
 
   const getResultMessage = (time) => {
     if (typeof time !== 'number') return ''
-    if (time < 200) return '超人的！'
-    if (time < 300) return 'とても早い！'
-    if (time < 400) return '早い！'
-    if (time < 500) return '普通'
+    if (time < 200) return 'やるやん'
+    if (time < 300) return 'おそっ'
+    if (time < 400) return '帰れ'
+    if (time < 500) return '寝てた？'
     return 'もう少し頑張ろう'
   }
 
