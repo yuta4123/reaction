@@ -2,6 +2,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -9,16 +13,22 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: white;
+  overflow-x: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }
 
 .app {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
+  padding: 10px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 h1 {
@@ -30,9 +40,9 @@ h1 {
 .game-area {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  padding: 40px;
-  margin-bottom: 2rem;
-  min-height: 300px;
+  padding: 30px 20px;
+  margin-bottom: 1rem;
+  min-height: 280px;
   width: 100%;
   max-width: 500px;
   display: flex;
@@ -40,6 +50,8 @@ h1 {
   justify-content: center;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  touch-action: manipulation;
+  flex-shrink: 0;
 }
 
 .game-content {
@@ -75,10 +87,31 @@ h1 {
   padding: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .waiting:hover {
   background: rgba(255, 193, 7, 0.3);
+}
+
+.waiting:active {
+  background: rgba(255, 193, 7, 0.4);
+  transform: scale(0.98);
+}
+
+.mobile-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.5; }
 }
 
 .ready {
@@ -87,12 +120,42 @@ h1 {
   padding: 30px;
   cursor: pointer;
   animation: pulse 1s infinite;
+  position: relative;
+}
+
+.ready:active {
+  transform: scale(0.95);
+  animation: none;
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+
+.pulse-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: pulse-ring 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
 }
 
 .finished h2 {
@@ -206,17 +269,90 @@ h1 {
 
 @media (max-width: 768px) {
   .app {
-    padding: 15px;
+    padding: 10px;
   }
 
   h1 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
   }
 
   .game-area {
-    padding: 30px 20px;
-    min-height: 250px;
+    padding: 25px 15px;
+    min-height: 320px;
+    margin-bottom: 1rem;
+  }
+
+  .game-content p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+
+  .start-button, .retry-button {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    min-height: 50px;
+    min-width: 120px;
+  }
+
+  .result .time {
+    font-size: 3rem;
+  }
+
+  .result .message {
+    font-size: 1.3rem;
+  }
+
+  .rankings {
+    padding: 20px 15px;
+    flex: 1;
+    max-height: none;
+  }
+
+  .rankings h2 {
+    font-size: 1.6rem;
+  }
+
+  .rankings li {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .rankings li.current {
+    padding: 15px;
+    margin: 5px 0;
+  }
+
+  .waiting, .ready {
+    min-height: 200px;
+    padding: 40px 20px;
+  }
+
+  .mobile-hint {
+    font-size: 1rem;
+    bottom: 15px;
+  }
+
+  .pulse-indicator {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .game-area {
+    padding: 20px 10px;
+    min-height: 280px;
+    margin-bottom: 1rem;
   }
 
   .game-content p {
@@ -224,8 +360,9 @@ h1 {
   }
 
   .start-button, .retry-button {
-    padding: 12px 24px;
+    padding: 12px 25px;
     font-size: 1rem;
+    min-height: 45px;
   }
 
   .result .time {
@@ -233,45 +370,70 @@ h1 {
   }
 
   .result .message {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .rankings {
-    padding: 20px;
+    padding: 15px 10px;
   }
 
   .rankings h2 {
-    font-size: 1.5rem;
-  }
-
-  .rankings li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-
-  .date {
-    align-self: flex-end;
-  }
-}
-
-@media (max-width: 480px) {
-  .app {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  .game-area {
-    padding: 20px 15px;
-    min-height: 200px;
+    font-size: 1.4rem;
   }
 
   .rankings-header {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
+  }
+
+  .waiting, .ready {
+    min-height: 180px;
+    padding: 30px 15px;
+  }
+
+  .mobile-hint {
+    font-size: 0.9rem;
+    bottom: 10px;
+  }
+
+  .pulse-indicator {
+    width: 60px;
+    height: 60px;
+  }
+
+  .rankings li {
+    padding: 12px 0;
+  }
+
+  .rankings li.current {
+    padding: 12px 10px;
+  }
+}
+
+/* 非常に小さな画面向け */
+@media (max-width: 360px) {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .game-area {
+    min-height: 250px;
+    padding: 15px 8px;
+  }
+
+  .waiting, .ready {
+    min-height: 160px;
+    padding: 25px 10px;
+  }
+
+  .start-button, .retry-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+
+  .result .time {
+    font-size: 2.2rem;
   }
 }
